@@ -73,3 +73,12 @@ BIN files are used by Novalogic's TextTool. This allows developers to associate 
 ### Other Formats
 
 - PAK: These contain 3D models and textures broken up by LOD. Conceptually similar to the 3di format used in a number of other Noval
+
+ogic games. They seem to be different. I don't yet know why they implemented a separate format when they already had 3di.
+- PAL: These are essentially just very small PCX files used only for their palette. I think they exist to quickly swap palettes on ships, etc., for various factions.
+- PWF: These seem to bundle the sounds.
+- SPX: Level files.
+
+I haven't exactly nailed down how the various events in any particular mission are scripted. Perhaps they are in the SPX files.
+
+Note: The only exploration I have done is on the files packaged in the game. I have not tried to reverse-engineer the save files, nor have I done any sort of analysis of the running game.
