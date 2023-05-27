@@ -1,0 +1,7 @@
+C:\Users\mlee\source\repos\TachyonPak\CBINTool\bin\Debug\CBINTool.exe.config
+C:\Users\mlee\source\repos\TachyonPak\CBINTool\bin\Debug\CBINTool.exe
+C:\Users\mlee\source\repos\TachyonPak\CBINTool\bin\Debug\CBINTool.pdb
+C:\Users\mlee\source\repos\TachyonPak\CBINTool\obj\Debug\CBINTool.csproj.AssemblyReference.cache
+C:\Users\mlee\source\repos\TachyonPak\CBINTool\obj\Debug\CBINTool.csproj.CoreCompileInputs.cache
+C:\Users\mlee\source\repos\TachyonPak\CBINTool\obj\Debug\CBINTool.exe
+C:\Users\mlee\source\repos\TachyonPak\CBINTool\obj\Debug\CBINTool.pdb

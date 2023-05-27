@@ -1,0 +1,7 @@
+C:\Users\mlee\source\repos\TachyonPak\TachyonPak\obj\Debug\TachyonPak.csproj.CoreCompileInputs.cache
+C:\Users\mlee\source\repos\TachyonPak\TachyonPak\bin\Debug\TachyonPak.exe.config
+C:\Users\mlee\source\repos\TachyonPak\TachyonPak\bin\Debug\TachyonPak.exe
+C:\Users\mlee\source\repos\TachyonPak\TachyonPak\bin\Debug\TachyonPak.pdb
+C:\Users\mlee\source\repos\TachyonPak\TachyonPak\obj\Debug\TachyonPak.exe
+C:\Users\mlee\source\repos\TachyonPak\TachyonPak\obj\Debug\TachyonPak.pdb
+C:\Users\mlee\source\repos\TachyonPak\TachyonPak\obj\Debug\TachyonPak.csproj.AssemblyReference.cache
