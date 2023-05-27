@@ -4,7 +4,7 @@ Modding tools for Tachyon: The Fringe
 
 This repository explores the file formats used in TTF. My hope is that these tools can be used to mod this venerable game and give it the second life that it deserves!
 
-Currently, there are two sets of tools available:
+These are the tools currently available:
 
 ## CBINTool
 
@@ -18,7 +18,11 @@ A fairly complete tool for decrypting, encrypting, and converting to/from text f
 Not as complete, but it allows for the extraction of textures so far.
 - PAK files are the 3D models + textures format.
 
-Others may come as I explore... Or I might see something more shiny and drop this like a hot rock! ¯\_(ツ)_/¯
+## Extract PFF
+
+Extracts the files from a pff archive according to a manifest file obtained using the pack tool that comes with Tachyon.
+
+Others may come as I explore... Or I might see something more shiny and drop this like a hot rock! ¯\\_(ツ)_/¯
 
 ---
 
