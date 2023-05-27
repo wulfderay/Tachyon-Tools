@@ -6,7 +6,7 @@ This tool allows you to extract files from a PFF (archive) file based on a provi
 ## Usage
 
 1. Obtain the PFF file that you want to extract files from.
-2. Generate the manifest file using `pack.exe`.
+2. Generate the manifest file using `pack.exe`. This is a utility included in the root of the tachyon installation directory.
 3. Use the `extract_pff.py` script to extract the files.
 
 ### Generating the Manifest File
