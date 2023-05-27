@@ -11,7 +11,7 @@ This tool allows you to extract files from a PFF (archive) file based on a provi
 
 ### Generating the Manifest File
 
-The manifest file contains information about the files stored in the PFF archive. You can use `pack.exe` (included in the Tachyon Tools) to generate the manifest file.
+The manifest file contains information about the files stored in the PFF archive. You can use `pack.exe` (included in the Tachyon installation files) to generate the manifest file.
 
 To generate the manifest file, open a command prompt and navigate to the directory where `pack.exe` is located. Then run the following command:
 
