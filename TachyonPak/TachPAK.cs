@@ -30,6 +30,9 @@ namespace TachyonPak
                     case "-l":
                         PrintLODInformation(pak);
                         break;
+                    case "-3":
+                        Print3DOInformation(pak);
+                        break;
                     case "-t":
                         PrintTextureInformation(pak);
                         break;
@@ -50,12 +53,14 @@ namespace TachyonPak
             }
         }
 
+
         public static void PrintUsage()
         {
             WriteLine("Usage: TachyonPak <operation> <input_file> [<output_directory>]");
             WriteLine("Operations:");
             WriteLine("  -h        - Print the PAK header");
             WriteLine("  -l        - Print LOD information");
+            WriteLine("  -3        - Print 3DO information");
             WriteLine("  -t        - Print texture information");
             WriteLine("  -e        - Extract textures to the specified output directory");
         }
@@ -87,6 +92,29 @@ namespace TachyonPak
                 foreach (var lodEntry in lod.Entries)
                     PrintLODEntry(lodEntry);
             }
+        }
+
+
+        private static void Print3DOInformation(PAKFile pak)
+        {
+            foreach (var lod in pak.LODs)
+            {
+                foreach (var _3do in lod._3DObjects)
+                {
+                    Print3DOHeader(_3do.header);
+                    _3DObjectConverter.ConvertToObj(_3do, _3do.header.Name + ".obj");
+                }
+            }
+        }
+        public static void Print3DOHeader(_3DOHeader header)
+        {
+            WriteLine($"Identifier: {header.Identifier}");
+            WriteLine($"unknown: 0x{header.unknown1:X2} 0x{header.unknown2:X2} 0x{header.unknown3:X2} 0x{header.unknown4:X2}");
+            WriteLine($"Name: {header.Name}");
+            WriteLine($"coordsmaybe: {header.coordsmaybe1} {header.coordsmaybe2} {header.coordsmaybe3} {header.coordsmaybe4} {header.coordsmaybe5} {header.coordsmaybe6} {header.coordsmaybe7}");
+            WriteLine($"count: Textures:{header.numTextures}\t Verts: {header.numVertices}\t Tris?:{header.numTriangles}\t Norms?: {header.numNormals}\t {header.count5}\t {header.count6} ");
+            WriteLine($"offset: 0x{header.offsetTextures:X8} 0x{header.offsetVertices:X8} 0x{header.offsetTriangles:X8} 0x{header.offsetNormals:X8} 0x{header.offset5:X8} 0x{header.offset6:X8}");
+            WriteLine($"Size per entry: Textures: {(header.offsetVertices - header.offsetTextures)/ header.numTextures} Verts: {(header.offsetTriangles - header.offsetVertices) / header.numVertices} Tris: {(header.offsetNormals - header.offsetTriangles) / header.numTriangles} Norms: {(header.offset5 - header.offsetNormals) / header.numNormals}");
         }
 
         public static void PrintTextureInformation(PAKFile pak)

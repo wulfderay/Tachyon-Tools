@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>-hlt "C:\GOG Games\Tachyon - The Fringe\Tachyon\PAK\NPCFLARE.PAK" "C:\GOG Games\Tachyon - The Fringe\Tachyon\PAK\NPCFLARE"</StartArguments>
+    <StartArguments>-3 "C:\GOG Games\Tachyon - The Fringe\Tachyon\PAK\BOX.PAK" "C:\GOG Games\Tachyon - The Fringe\Tachyon\PAK\BOX"</StartArguments>
   </PropertyGroup>
 </Project>

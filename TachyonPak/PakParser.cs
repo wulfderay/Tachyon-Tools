@@ -96,6 +96,7 @@ public class PAKParser
                 lodheaderHandle.Free();
 
                 pakFile.LODs[i].Entries = new LODEntry[pakFile.LODs[i].Header.Count];
+                pakFile.LODs[i]._3DObjects = new _3DObject[pakFile.LODs[i].Header.Count];
                 for (int j = 0; j < pakFile.LODs[i].Header.Count; j++)
                 {
                     stream.Seek(currentoffset + (j * lodEntrySize), SeekOrigin.Begin);
@@ -108,11 +109,18 @@ public class PAKParser
                     pakFile.LODs[i].Entries[j] = Marshal.PtrToStructure<LODEntry>(objectListHandle.AddrOfPinnedObject());
                     objectListHandle.Free();
 
-                    // Additional processing of objectList if needed
+                    // parse 3do for this entry
+
+                    pakFile.LODs[i]._3DObjects[j] = Parse3dObject(stream, pakFile.LODs[i].Entries[j].ObjectOffset);
+
                 }
                 currentoffset += pakFile.LODs[i].Header.Count * lodEntrySize;
+
+                
             }
 
+
+           
 
            
 
@@ -133,7 +141,7 @@ public class PAKParser
                 string textureFilename = ReadNullTerminatedString(stream);
                 if (textureFilename.EndsWith(".PCX", StringComparison.OrdinalIgnoreCase))
                 {
-                    textureOffsets.Add((int)stream.Position - textureListOffset - (textureFilename.Length +1)); // +1 for null terminated string.
+                    textureOffsets.Add((int)stream.Position - textureListOffset - Math.Min(textureFilename.Length +1, 13)); // +1 for null terminated string.
                 }
             }
 
@@ -166,6 +174,85 @@ public class PAKParser
 
         return pakFile;
     }
+
+    private _3DObject Parse3dObject(FileStream stream, int objectOffset)
+    {
+
+        int currentOffset = objectOffset;
+        var result = new _3DObject();
+
+        stream.Seek(objectOffset, SeekOrigin.Begin);
+        var objectListBytes = new byte[Marshal.SizeOf<_3DOHeader>()];
+        stream.Read(objectListBytes, 0, objectListBytes.Length);
+        var objectListHandle = GCHandle.Alloc(objectListBytes, GCHandleType.Pinned);
+        result.header = new _3DOHeader();
+        result.header = Marshal.PtrToStructure<_3DOHeader>(objectListHandle.AddrOfPinnedObject());
+        objectListHandle.Free();
+
+        if (result.header.Identifier != "3DO") // stop processing.
+            return result;
+
+        currentOffset += Marshal.SizeOf<_3DOHeader>();
+
+        // texture entries
+        result.textures = new TextureEntry[result.header.numTextures];
+        for (int i = 0; i < result.header.numTextures; i++)
+        {
+            stream.Seek(currentOffset , SeekOrigin.Begin);
+            var textureEntryBytes = new byte[Marshal.SizeOf<TextureEntry>()];
+            stream.Read(textureEntryBytes, 0, textureEntryBytes.Length);
+            var textureEntryHandle = GCHandle.Alloc(textureEntryBytes, GCHandleType.Pinned);
+            result.textures[i] = new TextureEntry();
+            result.textures[i] = Marshal.PtrToStructure<TextureEntry>(textureEntryHandle.AddrOfPinnedObject());
+            textureEntryHandle.Free();
+            currentOffset += Marshal.SizeOf<TextureEntry>();
+        }
+
+        // verts
+        result.vertices = new Vertex[result.header.numVertices];
+        for (int i = 0; i < result.header.numVertices; i++)
+        {
+            stream.Seek(currentOffset, SeekOrigin.Begin);
+            var vertexBytes = new byte[Marshal.SizeOf<Vertex>()];
+            stream.Read(vertexBytes, 0, vertexBytes.Length);
+            var vertexHandle = GCHandle.Alloc(vertexBytes, GCHandleType.Pinned);
+            result.vertices[i] = new Vertex();
+            result.vertices[i] = Marshal.PtrToStructure<Vertex>(vertexHandle.AddrOfPinnedObject());
+            vertexHandle.Free();
+            currentOffset += Marshal.SizeOf<Vertex>();
+        }
+
+        // tris
+        result.tris = new Triangle[result.header.numTriangles];
+        for (int i = 0; i < result.header.numTriangles; i++)
+        {
+            stream.Seek(currentOffset, SeekOrigin.Begin);
+            var triBytes = new byte[Marshal.SizeOf<Triangle>()];
+            stream.Read(triBytes, 0, triBytes.Length);
+            var triHandle = GCHandle.Alloc(triBytes, GCHandleType.Pinned);
+            result.tris[i] = new Triangle();
+            result.tris[i] = Marshal.PtrToStructure<Triangle>(triHandle.AddrOfPinnedObject());
+            triHandle.Free();
+            currentOffset += Marshal.SizeOf<Triangle>();
+        }
+
+        // normals or whatever
+        result.normals_or_whatever = new Normal[result.header.numNormals];
+        for (int i = 0; i < result.header.numNormals; i++)
+        {
+            stream.Seek(currentOffset, SeekOrigin.Begin);
+            var normalBytes = new byte[Marshal.SizeOf<Normal>()];
+            stream.Read(normalBytes, 0, normalBytes.Length);
+            var normalHandle = GCHandle.Alloc(normalBytes, GCHandleType.Pinned);
+            result.normals_or_whatever[i] = new Normal();
+            result.normals_or_whatever[i] = Marshal.PtrToStructure<Normal>(normalHandle.AddrOfPinnedObject());
+            normalHandle.Free();
+            currentOffset += Marshal.SizeOf<Normal>();
+        }
+
+        return result;
+    }
+
 
     /** The PCX files in the texture section have their headers stripped off, 
      * so we must reconstruct the header and prepend it.
@@ -229,7 +316,7 @@ public class PAKParser
             bool isStartValid = false;
 
             int value;
-            while ((value = stream.ReadByte()) != 0)
+            while ((value = stream.ReadByte()) != 0 && (char.IsLetterOrDigit((char)value) || value == '.' || value == '_'))
             {
                 if (!isStartValid)
                 {
@@ -240,7 +327,6 @@ public class PAKParser
 
                     } else continue;
                 }
-
                 memoryStream.WriteByte((byte)value);
             }
 
