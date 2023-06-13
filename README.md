@@ -15,7 +15,7 @@ A fairly complete tool for decrypting, encrypting, and converting to/from text f
 
 ## PAKTool
 
-Not as complete, but it allows for the extraction of textures so far.
+Not as complete, but it allows for the extraction of textures and models so far (but not together).
 - PAK files are the 3D models + textures format.
 
 ## Extract PFF
