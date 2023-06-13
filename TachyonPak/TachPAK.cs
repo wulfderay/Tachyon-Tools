@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace TachyonPak
 {
@@ -79,7 +81,7 @@ namespace TachyonPak
             WriteLine("Texture Start Offset: 0x" + header.textureStart.ToString("X"));
             WriteLine("Texture End Offset: 0x" + header.textureEnd.ToString("X"));
             WriteLine("Filler2: 0x" + header.Filler2.ToString("X"));
-            WriteLine("Unknown3: 0x" + header.Unknown3.ToString("X"));
+            WriteLine("MysteryOffset: 0x" + header.OffsetOfMysterySection.ToString("X"));
             WriteLine("Filler3: " + string.Join(", ", header.Filler3.Select(x => "0x" + x.ToString("X"))));
         }
         public static void PrintLODInformation(PAKFile pak)
@@ -97,12 +99,17 @@ namespace TachyonPak
 
         private static void Print3DOInformation(PAKFile pak)
         {
+            var dirName = SanitizeFileName(pak.Header.Name);
+            if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName);
             foreach (var lod in pak.LODs)
             {
                 foreach (var _3do in lod._3DObjects)
                 {
                     Print3DOHeader(_3do.header);
-                    _3DObjectConverter.ConvertToObj(_3do, _3do.header.Name + ".obj");
+                    _3DObjectConverter.ConvertToObj(_3do, dirName + "\\"+ SanitizeFileName(_3do.header.Name) + ".obj");
+
+                    _3DObjectConverter.ConvertToCOLLADA(_3do, dirName + "\\" + SanitizeFileName(_3do.header.Name) + ".dae");
                 }
             }
         }
@@ -112,9 +119,9 @@ namespace TachyonPak
             WriteLine($"unknown: 0x{header.unknown1:X2} 0x{header.unknown2:X2} 0x{header.unknown3:X2} 0x{header.unknown4:X2}");
             WriteLine($"Name: {header.Name}");
             WriteLine($"coordsmaybe: {header.coordsmaybe1} {header.coordsmaybe2} {header.coordsmaybe3} {header.coordsmaybe4} {header.coordsmaybe5} {header.coordsmaybe6} {header.coordsmaybe7}");
-            WriteLine($"count: Textures:{header.numTextures}\t Verts: {header.numVertices}\t Tris?:{header.numTriangles}\t Norms?: {header.numNormals}\t {header.count5}\t {header.count6} ");
+            WriteLine($"count: Textures:{header.numTextures}\t Verts: {header.numVertices}\t Tris?:{header.numTriangles}\t Norms?: {header.numNormals}\t List5:{header.count5}\t List6:{header.count6} ");
             WriteLine($"offset: 0x{header.offsetTextures:X8} 0x{header.offsetVertices:X8} 0x{header.offsetTriangles:X8} 0x{header.offsetNormals:X8} 0x{header.offset5:X8} 0x{header.offset6:X8}");
-            WriteLine($"Size per entry: Textures: {(header.offsetVertices - header.offsetTextures)/ header.numTextures} Verts: {(header.offsetTriangles - header.offsetVertices) / header.numVertices} Tris: {(header.offsetNormals - header.offsetTriangles) / header.numTriangles} Norms: {(header.offset5 - header.offsetNormals) / header.numNormals}");
+            WriteLine($"Size per entry: Textures: {(header.offsetVertices - header.offsetTextures)/ header.numTextures} Verts: {(header.offsetTriangles - header.offsetVertices) / header.numVertices} Tris: {(header.offsetNormals - header.offsetTriangles) / header.numTriangles} Norms: {(header.offset5 - header.offsetNormals) / header.numNormals} ");
         }
 
         public static void PrintTextureInformation(PAKFile pak)
@@ -147,7 +154,16 @@ namespace TachyonPak
             Debug.WriteLine(message);
         }
 
-       
+        public static string SanitizeFileName(string fileName)
+        {
+            // Remove any characters that are not allowed in directory names
+            string sanitized = Regex.Replace(fileName, @"[^\w\-\.]", "");
+
+            // Remove any leading or trailing periods or spaces
+            sanitized = sanitized.Trim('.', ' ');
+            return sanitized;
+        }
+
 
     }
 }

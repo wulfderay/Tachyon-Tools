@@ -3,4 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartArguments>-3 "C:\GOG Games\Tachyon - The Fringe\Tachyon\PAK\BOX.PAK" "C:\GOG Games\Tachyon - The Fringe\Tachyon\PAK\BOX"</StartArguments>
   </PropertyGroup>
+  <PropertyGroup>
+    <ProjectView>ProjectFiles</ProjectView>
+  </PropertyGroup>
 </Project>

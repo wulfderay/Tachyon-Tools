@@ -27,7 +27,7 @@ public struct PAKHeader
     public int textureStart;
     public int textureEnd;
     public int Filler2;
-    public int Unknown3;
+    public int OffsetOfMysterySection;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
     public byte[] Filler3;
     // the header can actually be larger or smaller based on the LOD. for each LOD there is an additional 8 bytes.
@@ -115,6 +115,8 @@ public struct _3DObject
     public Vertex[] vertices;
     public Triangle[] tris;
     public Normal[] normals_or_whatever;
+    public List5[] list5;
+    public List6[] list6;
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -166,9 +168,8 @@ public struct Vertex
     public int [] coordinates;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
     public int[] fillermaybe;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
     public int[] texturecoordsmaybe;
-    public int dunno;
 }
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -189,5 +190,19 @@ public struct Normal
     public int[] coordinates;
     public int dunno;
 
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct List5
+{
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+    public int[] dunno;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct List6
+{
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+    public int[] dunno;
 }
 

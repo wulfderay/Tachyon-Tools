@@ -195,61 +195,40 @@ public class PAKParser
         currentOffset += Marshal.SizeOf<_3DOHeader>();
 
         // texture entries
-        result.textures = new TextureEntry[result.header.numTextures];
-        for (int i = 0; i < result.header.numTextures; i++)
-        {
-            stream.Seek(currentOffset , SeekOrigin.Begin);
-            var textureEntryBytes = new byte[Marshal.SizeOf<TextureEntry>()];
-            stream.Read(textureEntryBytes, 0, textureEntryBytes.Length);
-            var textureEntryHandle = GCHandle.Alloc(textureEntryBytes, GCHandleType.Pinned);
-            result.textures[i] = new TextureEntry();
-            result.textures[i] = Marshal.PtrToStructure<TextureEntry>(textureEntryHandle.AddrOfPinnedObject());
-            textureEntryHandle.Free();
-            currentOffset += Marshal.SizeOf<TextureEntry>();
-        }
+        result.textures = ParseArray<TextureEntry>(stream, ref currentOffset, result.header.numTextures);
 
         // verts
-        result.vertices = new Vertex[result.header.numVertices];
-        for (int i = 0; i < result.header.numVertices; i++)
-        {
-            stream.Seek(currentOffset, SeekOrigin.Begin);
-            var vertexBytes = new byte[Marshal.SizeOf<Vertex>()];
-            stream.Read(vertexBytes, 0, vertexBytes.Length);
-            var vertexHandle = GCHandle.Alloc(vertexBytes, GCHandleType.Pinned);
-            result.vertices[i] = new Vertex();
-            result.vertices[i] = Marshal.PtrToStructure<Vertex>(vertexHandle.AddrOfPinnedObject());
-            vertexHandle.Free();
-            currentOffset += Marshal.SizeOf<Vertex>();
-        }
+        result.vertices = ParseArray<Vertex>(stream, ref currentOffset, result.header.numVertices);
 
         // tris
-        result.tris = new Triangle[result.header.numTriangles];
-        for (int i = 0; i < result.header.numTriangles; i++)
-        {
-            stream.Seek(currentOffset, SeekOrigin.Begin);
-            var triBytes = new byte[Marshal.SizeOf<Triangle>()];
-            stream.Read(triBytes, 0, triBytes.Length);
-            var triHandle = GCHandle.Alloc(triBytes, GCHandleType.Pinned);
-            result.tris[i] = new Triangle();
-            result.tris[i] = Marshal.PtrToStructure<Triangle>(triHandle.AddrOfPinnedObject());
-            triHandle.Free();
-            currentOffset += Marshal.SizeOf<Triangle>();
-        }
+        result.tris = ParseArray<Triangle>(stream, ref currentOffset, result.header.numTriangles); 
 
         // normals or whatever
-        result.normals_or_whatever = new Normal[result.header.numNormals];
-        for (int i = 0; i < result.header.numNormals; i++)
+        result.normals_or_whatever = ParseArray<Normal>(stream, ref currentOffset, result.header.numNormals);
+
+        // mystery list 5
+        result.list5 = ParseArray<List5>(stream, ref currentOffset, result.header.count5);
+
+        // mystery list 6
+        result.list6 = ParseArray<List6>(stream, ref currentOffset, result.header.count6);
+
+        return result;
+    }
+
+
+    private static T[] ParseArray<T>(FileStream stream, ref int currentOffset, int count)
+    {
+        var result = new T[count];
+        for (int i = 0; i < count; i++)
         {
             stream.Seek(currentOffset, SeekOrigin.Begin);
-            var normalBytes = new byte[Marshal.SizeOf<Normal>()];
-            stream.Read(normalBytes, 0, normalBytes.Length);
-            var normalHandle = GCHandle.Alloc(normalBytes, GCHandleType.Pinned);
-            result.normals_or_whatever[i] = new Normal();
-            result.normals_or_whatever[i] = Marshal.PtrToStructure<Normal>(normalHandle.AddrOfPinnedObject());
-            normalHandle.Free();
-            currentOffset += Marshal.SizeOf<Normal>();
+            var elementBytes = new byte[Marshal.SizeOf<T>()];
+            stream.Read(elementBytes, 0, elementBytes.Length);
+            var elementHandle = GCHandle.Alloc(elementBytes, GCHandleType.Pinned);
+            result[i] = Marshal.PtrToStructure<T>(elementHandle.AddrOfPinnedObject());
+            elementHandle.Free();
+            currentOffset += Marshal.SizeOf<T>();
         }
-
         return result;
     }
 

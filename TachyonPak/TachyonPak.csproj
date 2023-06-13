@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="collada_schema_1_4.cs" />
     <Compile Include="PakParser.cs" />
     <Compile Include="TachPAK.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
